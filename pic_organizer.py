@@ -51,7 +51,6 @@ if __name__ == "__main__":
         tags = exifread.process_file(p, stop_tag="EXIF DateTimeOriginal")
 
         # attempt to move picture if it has the proper EXIF tag
-        #if tags and tags["EXIF DateTimeOriginal"]:
         try:
             pic_datetime = datetime.datetime.strptime(str(tags["EXIF DateTimeOriginal"]), "%Y:%m:%d %H:%M:%S")
             move_picture(pic, pic_datetime, args.destination)
