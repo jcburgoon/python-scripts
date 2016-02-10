@@ -82,6 +82,7 @@ def process_pcap(pcap_path):
     pdns_pcap = rdpcap(pcap_path)
 
     obj_list = []
+    count = 0
 
     for pkt in pdns_pcap:
         if pkt.haslayer(DNS):
@@ -96,7 +97,14 @@ def process_pcap(pcap_path):
                 obj_list[obj_index] = update_obj(pkt, obj_list[obj_index])
             else:
                 # add new obj
-                obj_list.append(create_obj(pkt))
+                new_obj = create_obj(pkt)
+                # filter out anything that makes it through create obj without creating a new obj
+                # likely an error (e.g. a response without a DNSRR record due to an error)
+                if new_obj:
+                    obj_list.append(new_obj)
+                else:
+                    print "Packet # " + str(count) + " had an error"
+        count += 1
 
     return obj_list
 
